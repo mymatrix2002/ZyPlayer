@@ -86,10 +86,10 @@ export const sm4 = {
       throw new Error('IV is required in CBC/CFB/OFB/CTR mode');
     }
 
-    const keyBuffer = wordParse[keyEncode](key);
-    const ivBuffer = mode.toLowerCase() !== 'ecb' ? wordParse[ivEncode](iv) : undefined;
+    const keyBuffer = wordParse[keyEncode as keyof typeof wordParse](key);
+    const ivBuffer = mode.toLowerCase() !== 'ecb' ? wordParse[ivEncode as keyof typeof wordParse](iv!) : undefined;
     const aadBuffer = mode.toLowerCase() === 'gcm' && aad ? wordParse[aadEncode](aad) : undefined;
-    const srcBuffer = wordParse[inputEncode](src);
+    const srcBuffer = wordParse[inputEncode as keyof typeof wordParse](src);
 
     if (keyBuffer.sigBytes !== 16) throw new Error('Key must be 128 bytes');
     if (mode !== 'ecb' && ivBuffer!.sigBytes !== 16) throw new Error('IV must be 128 bytes');
@@ -168,11 +168,11 @@ export const sm4 = {
       throw new Error('IV is required in CBC/CFB/OFB/CTR mode');
     }
 
-    const keyBuffer = wordParse[keyEncode](key);
-    const ivBuffer = mode.toLowerCase() !== 'ecb' ? wordParse[ivEncode](iv) : undefined;
+    const keyBuffer = wordParse[keyEncode as keyof typeof wordParse](key);
+    const ivBuffer = mode.toLowerCase() !== 'ecb' ? wordParse[ivEncode as keyof typeof wordParse](iv!) : undefined;
     const aadBuffer = mode.toLowerCase() === 'gcm' && aad ? wordParse[aadEncode](aad) : undefined;
     const tagBuffer = mode.toLowerCase() === 'gcm' && tag ? wordParse[tagEncode](tag) : undefined;
-    const srcBuffer = wordParse[inputEncode](src);
+    const srcBuffer = wordParse[inputEncode as keyof typeof wordParse](src);
 
     if (keyBuffer.sigBytes !== 16) throw new Error('Key must be 128 bytes');
     if (mode !== 'ecb' && ivBuffer!.sigBytes !== 16) throw new Error('IV must be 128 bytes');
