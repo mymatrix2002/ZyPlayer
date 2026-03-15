@@ -2,7 +2,14 @@
 
 > All notable changes to this project will be documented in this file.
 
-## 3.4.3
+## 3.4.4
+
+- 修复: 改进更新行为，防止意外自动更新
+- 变动: 依赖库升级
+
+[View on GitHub](https://github.com/Hiram-Wong/ZyPlayer/releases/tag/v3.4.4)
+
+## 3.4.3 (2026-03-14)
 
 - 特性: vscode增加mcp工具
 - 特性: 支持影视action动作操作(action组件)
