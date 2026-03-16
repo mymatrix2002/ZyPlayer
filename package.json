@@ -274,6 +274,8 @@
       "minimatch@>=10.0.0 <10.2.1": "10.2.1",
       "node-abi": "4.24.0",
       "proxy-agent": "^6.5.0",
+      "semver": "^7.7.4",
+      "tar": "^7.5.11",
       "tar-fs": "^2.1.4",
       "undici": "6.23.0",
       "vite": "npm:rolldown-vite@7.3.0"
