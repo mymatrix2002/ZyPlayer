@@ -408,7 +408,6 @@ sudo yum install xdg-utils
 - **产品设计**：参与设计讨论
 - **编写文档**：改进用户手册和指南
 - **社区参与**：加入讨论并帮助用户
-- **用爱发电**：支持项目发展(不限于资金,服务器等) <[kofi](https://ko-fi.com/hiramwong)> <[爱发电](https://ifdian.net/a/hiram)>
 
 [![][github-contributors-shield]][github-contributors-link]
 
