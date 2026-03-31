@@ -121,12 +121,15 @@ const toggleAside = () => {
 };
 
 const handleUrlAdRemove = (url: string, remove: boolean = false): string => {
-  if (remove && url.startsWith('http') && !url.startsWith(SYSTEM_M3U8_AD_REMOVE_API)) {
+  if (!url.startsWith('http')) return url;
+
+  if (remove && !url.startsWith(SYSTEM_M3U8_AD_REMOVE_API)) {
     return `${SYSTEM_M3U8_AD_REMOVE_API}?url=${encodeURIComponent(url)}`;
   }
-  if (!remove && url.startsWith('http') && url.startsWith(SYSTEM_M3U8_AD_REMOVE_API)) {
+  if (!remove && url.startsWith(SYSTEM_M3U8_AD_REMOVE_API)) {
     return decodeURIComponent(url.replace(`${SYSTEM_M3U8_AD_REMOVE_API}?url=`, ''));
   }
+
   return url;
 };
 
@@ -152,7 +155,12 @@ const handlePlayerCreate = async (
     const finalItem: IMultiPlayerOptions = {
       ...item,
       url: handleUrlAdRemove(item.url, item.skipAd),
-      quality: (item.quality || []).map((q) => ({ ...q, url: handleUrlAdRemove(q.url, item.skipAd) })),
+      quality: (item.quality || [])
+        .reduce((acc, cur, i) => {
+          if (i % 2 === 0) acc.push({ name: cur, url: item.quality[i + 1] });
+          return acc;
+        }, [])
+        .map((q) => ({ ...q, url: handleUrlAdRemove(q.url, item.skipAd) })),
     };
     playerFormData.value = merge(playerFormData.value, finalItem);
     await playerRef.value?.create(playerFormData.value, player.type, mode);

@@ -20,6 +20,7 @@ import {
   isObject,
   isObjectEmpty,
   isPositiveFiniteNumber,
+  isStrEmpty,
   isString,
 } from '@shared/modules/validate';
 import type {
@@ -253,8 +254,13 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
       const adapter = await prepare(uuid);
       const resp = await adapter.play({ flag, play });
 
+      if (isArray(resp?.url) && !isArrayEmpty(resp.url)) {
+        if (!isArray(resp?.quality) || isArrayEmpty(resp.quality)) resp.quality = resp.url as unknown as string[];
+        resp.url = resp.url?.[1];
+      }
+
       const res = {
-        url: resp?.url || '',
+        url: isString(resp?.url) && !isStrEmpty(resp.url) ? resp.url : '',
         quality: isArray(resp?.quality) && !isArrayEmpty(resp.quality) ? resp.quality : [],
         parse: isPositiveFiniteNumber(resp?.parse) ? resp.parse : 0,
         jx: isPositiveFiniteNumber(resp?.jx) ? resp.jx : 0,
@@ -362,7 +368,9 @@ const api: FastifyPluginAsync = async (fastify): Promise<void> => {
           flag: Object.keys(vod_episode)[0] || '',
           play: vod_episode[Object.keys(vod_episode)[0]]?.[0].link || '',
         });
-        return !!resPlay?.url;
+        return (
+          (isString(resPlay?.url) && !isStrEmpty(resPlay.url)) || (isArray(resPlay?.url) && !isArrayEmpty(resPlay.url))
+        );
       };
 
       const typeCheckMap: Record<string, (() => Promise<boolean>)[]> = {

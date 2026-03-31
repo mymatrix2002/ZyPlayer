@@ -141,8 +141,8 @@ export interface ICmsSearch {
 }
 
 export interface ICmsPlay {
-  url: string;
-  quality?: Array<string | number>;
+  url: string | Array<string>;
+  quality?: Array<string>;
   jx?: number;
   parse?: number;
   headers?: Record<string, any>;
