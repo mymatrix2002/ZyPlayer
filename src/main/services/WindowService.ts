@@ -410,7 +410,7 @@ export class WindowService {
 
       event.preventDefault();
       if (isSafeExternalUrl(url)) {
-        void shell.openExternal(url);
+        shell.openExternal(url);
       } else {
         logger.warn(`Blocked navigation to untrusted URL scheme: ${url}`);
       }

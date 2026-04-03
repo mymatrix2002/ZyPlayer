@@ -19,6 +19,7 @@ import { windowService } from '@main/services/WindowService';
 import { createDir, fileDelete, pathExist, readDirFaster, readFile, saveFile } from '@main/utils/file';
 import type { IHomePath, ISystemPath, IUserPath } from '@main/utils/path';
 import { getHomePath, getSystemPath, getUserPath } from '@main/utils/path';
+import { isSafeExternalUrl } from '@main/utils/security';
 import { execAsync } from '@main/utils/shell';
 import { arch, generateUserAgent, isLinux, isMacOS, isPortable, isWindows, platform } from '@main/utils/systeminfo';
 import { IPC_CHANNEL } from '@shared/config/ipcChannel';
@@ -250,6 +251,10 @@ export function registerIpc(mainWindow: BrowserWindow, app: Electron.App) {
   });
 
   ipcMain.handle(IPC_CHANNEL.OPEN_WEBSITE, async (_, url: string) => {
+    if (!isSafeExternalUrl(url)) {
+      logger.warn(`Blocked shell.openExternal for untrusted URL scheme: ${url}`);
+      return;
+    }
     await shell.openExternal(url);
   });
 
