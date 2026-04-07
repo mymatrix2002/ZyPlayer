@@ -490,8 +490,10 @@ const loadMoreSearch = async (): Promise<number> => {
 const loadMore = async ($state: ILoadStateHdandler) => {
   try {
     if (active.value.loadStatus !== 'complete') {
-      $state.complete();
-      return;
+      if (!(searchValue.value && !isArrayEmpty(config.value.searchList))) {
+        $state.complete();
+        return;
+      }
     }
 
     const length = searchValue.value ? await loadMoreSearch() : await loadMoreCategory();
