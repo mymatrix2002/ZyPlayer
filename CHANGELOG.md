@@ -8,6 +8,7 @@
 - 特性: 热搜支持海信, 修复云合, 剔除百度/夸克
 - 特性: 支持login事件(basic-auth)
 - 特性: scheme支持zy://sub?lang={{lang}}&name={{name}}&url={{url}}
+- 特性: 播放页隐身模式(鼠标移入播放, 移出暂停并隐藏窗口)
 - 修复: windows x64平台调用npminstall失败
 - 修复: 窗口崩溃时间存储错误
 - 修复: 老板键触发缺未暂停视频播放

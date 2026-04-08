@@ -20,7 +20,7 @@ import {
   isUndefined,
 } from '@shared/modules/validate';
 import type { BrowserWindowConstructorOptions } from 'electron';
-import { app, BrowserWindow, ipcMain, nativeImage, nativeTheme, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, nativeTheme, screen, shell } from 'electron';
 import windowStateKeeper from 'electron-window-state';
 import { merge } from 'es-toolkit';
 
@@ -220,7 +220,7 @@ export class WindowService {
       return;
     }
 
-    // [macOs/Windows] hacky fix
+    // [macOS/Windows] hacky fix
     // previous window(not self-app) should be focused again after miniWindow hide
     // this workaround is to make previous window focused again after miniWindow hide
     if (isWindows) {
@@ -229,7 +229,7 @@ export class WindowService {
       return;
     } else if (isMacOS) {
       mainWindow.hide();
-      app.hide();
+      // app.hide();
       return;
     }
 
@@ -303,6 +303,32 @@ export class WindowService {
     windows.forEach((win) => this.reloadWindow(win, force));
   }
 
+  private mouseTracker(mainWindow: BrowserWindow, interval = 100) {
+    let wasInside = false;
+
+    const timer = setInterval(() => {
+      if (mainWindow.isDestroyed()) {
+        clearInterval(timer);
+        return;
+      }
+
+      const cursor = screen.getCursorScreenPoint();
+      const bounds = mainWindow.getBounds();
+      const isInside =
+        cursor.x >= bounds.x &&
+        cursor.x <= bounds.x + bounds.width &&
+        cursor.y >= bounds.y &&
+        cursor.y <= bounds.y + bounds.height;
+
+      if (isInside !== wasInside) {
+        mainWindow.webContents.send(IPC_CHANNEL.MEDIA_BROWSE, !isInside);
+        wasInside = isInside;
+      }
+    }, interval);
+
+    return () => clearInterval(timer);
+  }
+
   private safeClose(mainWindow: BrowserWindow) {
     const finish = () => {
       ipcMain.removeListener(IPC_CHANNEL.WINDOW_DESTROY_RELAY, onAck);
@@ -357,7 +383,7 @@ export class WindowService {
       mainWindow.webContents.setZoomFactor(configManager.zoom);
 
       // [mac]hacky-fix: miniWindow set visibleOnFullScreen:true will cause dock icon disappeared
-      app.dock?.show();
+      // app.dock?.show();
       mainWindow.show();
     });
 
@@ -762,11 +788,14 @@ export class WindowService {
       }
     });
 
+    this.mouseTracker(mainWindow);
+
     if (!isPackaged && process.env.ELECTRON_RENDERER_URL) {
       mainWindow.loadURL(`${process.env.ELECTRON_RENDERER_URL}/#/player`);
     } else {
       mainWindow.loadFile(join(import.meta.dirname, '../renderer/index.html'), { hash: 'player' });
     }
+
     return mainWindow;
   }
 
@@ -844,7 +873,7 @@ export class WindowService {
         mainWindow.webContents.setZoomFactor(configManager.zoom);
 
         // [mac]hacky-fix: miniWindow set visibleOnFullScreen:true will cause dock icon disappeared
-        app.dock?.show();
+        // app.dock?.show();
         mainWindow.show();
       });
     }

@@ -24,6 +24,7 @@ export enum IPC_CHANNEL {
   BROWSER_NAVIGATE = 'business:browser-navigate',
   CALL_PLAYER = 'business:call-player',
   MEDIA_PAUSE = 'business:media-pause',
+  MEDIA_BROWSE = 'business:media-browse',
 
   // change
   CHANGE_THEME = 'change:theme',

@@ -2,7 +2,7 @@
   <div class="layout-player">
     <t-layout :class="[`${prefix}-layout`]">
       <t-header class="drag-region" :class="[`${prefix}-header`, active.headerPin ? 'pin' : '']">
-        <l-header :title="title" />
+        <l-header :title="title" :browse="headerFormData.browse" @browse="handleBrowse" />
       </t-header>
       <t-layout :class="[`${prefix}-main`]">
         <t-content :class="[`${prefix}-content`]">
@@ -37,6 +37,7 @@
 import { APP_NAME } from '@shared/config/appinfo';
 import { SYSTEM_M3U8_AD_REMOVE_API } from '@shared/config/env';
 import { IPC_CHANNEL } from '@shared/config/ipcChannel';
+import { WINDOW_NAME } from '@shared/config/window';
 import { isArray, isArrayEmpty } from '@shared/modules/validate';
 import type { IBarrageResult } from '@shared/types/barrage';
 import { merge } from 'es-toolkit';
@@ -79,6 +80,9 @@ const processFormData = ref<IVideoProcess>({
   currentTime: 0,
   duration: 0,
 });
+const headerFormData = ref({
+  browse: false,
+});
 const playerStoreFormData = computed<IStorePlayer>(() => storePlayer.$state);
 
 const active = ref({
@@ -111,8 +115,17 @@ const setup = () => {
   });
 
   window.electron.ipcRenderer.on(IPC_CHANNEL.MEDIA_PAUSE, (_event, status) => {
-    console.log('MEDIA_PAUSE', status);
     status === true ? playerRef.value?.pause() : playerRef.value?.play();
+  });
+
+  window.electron.ipcRenderer.on(IPC_CHANNEL.MEDIA_BROWSE, (_event, status) => {
+    if (headerFormData.value.browse && status) {
+      window.electron.ipcRenderer.invoke(IPC_CHANNEL.WINDOW_HIDE, WINDOW_NAME.PLAYER);
+      playerRef.value?.pause();
+    } else {
+      window.electron.ipcRenderer.invoke(IPC_CHANNEL.WINDOW_SHOW, WINDOW_NAME.PLAYER);
+      playerRef.value?.play();
+    }
   });
 
   document.title = `${APP_NAME}(${t('pages.player.title')})`;
@@ -124,6 +137,10 @@ const dispose = () => {
 
 const toggleAside = () => {
   active.value.aside = !active.value.aside;
+};
+
+const handleBrowse = (val: boolean) => {
+  headerFormData.value.browse = val;
 };
 
 const handleUrlAdRemove = (url: string, remove: boolean = false): string => {
