@@ -190,7 +190,8 @@ class ConnectService extends PythonService {
   }
 
   public async prepare(): Promise<void> {
-    await this.setup();
+    await this.checkBinary();
+    await this.installDep();
 
     const pids = await this.matchPort(this.port);
 
@@ -264,11 +265,6 @@ class ConnectService extends PythonService {
     }
   }
 
-  public async setup(): Promise<void> {
-    await this.checkBinary();
-    await this.installDep();
-  }
-
   public async execCtx(code: string, type: string, options: any[] = []): Promise<any> {
     const payload: IGrpcRequest = { code, type, options };
     return await this.exec(payload);
@@ -299,7 +295,7 @@ export class T3PyAdapter {
   }
 
   public static async setup(): Promise<void> {
-    await connectService.setup();
+    await connectService.prepare();
   }
 
   private async execCtx(type: string, options: any[] = []): Promise<any> {
