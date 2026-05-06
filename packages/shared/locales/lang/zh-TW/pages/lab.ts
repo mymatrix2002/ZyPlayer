@@ -49,6 +49,7 @@ export default {
           rsaesPkcs1: 'PKCS1',
           rsaOaep: 'OAEP',
           rsaOaepSha1: 'OAEP-SHA1',
+          rsaOaepSha224: 'OAEP-SHA224',
           rsaOaepSha256: 'OAEP-SHA256',
           rsaOaepSha384: 'OAEP-SHA384',
           rsaOaepSha512: 'OAEP-SHA512',
