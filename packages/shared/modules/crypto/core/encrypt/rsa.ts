@@ -289,7 +289,7 @@ export const rsa = {
     const decryptFn = (data: string): string => {
       if (type === 0) {
         if (scheme !== 'RSAES-PKCS1-V1_5')
-          throw new Error('Public key encryption only supports RSAES-PKCS1-V1_5 padding');
+          throw new Error('Public key decryption only supports RSAES-PKCS1-V1_5 padding');
         throw new Error('Public key decryption is not supported');
       } else {
         return (rsaKey as forge.pki.rsa.PrivateKey).decrypt(data, scheme, schemeOptions);
